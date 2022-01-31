@@ -27,32 +27,41 @@ class MusicPlayer(commands.Cog):
     @commands.command()
     async def play(self, ctx, *args):
         voice = ctx.guild.voice_client
+        print(voice)
+        if voice == None:
+            channel = ctx.message.author.voice.channel
+            await channel.connect()
+            await ctx.send('I joined the voice channel **{}**'.format(channel.name))
+            voice = ctx.guild.voice_client
+        else:
+            pass
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'}
         YDL_OPTIONS = {'format': 'bestaudio'}
         if len(args)==1 and 'https://www.youtube.com' in args[0]:
-            self.queue.append(args[0])
+            url = args[0]
         elif len(args)==1 and 'https://open.spotify.com/track' in args[0]:
             url = get_spotify_track(args[0])
-            self.queue.append(url)
         elif len(args)==1 and 'https://open.spotify.com/playlist' in args[0]:
             links = get_playlist_tracks(args[0])
             for link in links:
                 self.queue.append(link)
+            url = links[0]
         else:
-            link = get_song_link(' '.join(arg for arg in args))
-            self.queue.append(link)
+            url = get_song_link(' '.join(arg for arg in args))
             
         if not voice.is_playing():
-            try:
+            if voice.is_paused():
                 voice.resume()
-            except:
+            else:
                 with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
                     info = ydl.extract_info(url, download=False)
                     url2 = info['formats'][0]['url']
                     source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS, executable='ffmpeg.exe')
                     voice.play(source)
+                    self.queue.append(url)
         else:
             self.queue.append(url)
+            await ctx.send('Added song to queue!')
 
 
     @commands.command()
@@ -73,7 +82,7 @@ class MusicPlayer(commands.Cog):
                 await ctx.send('song queued!')
         else:
             if len(self.queue)!=0:
-                await ctx.send('``'.join(song+'``'+'\n' for song in self.queue))
+                await ctx.send('```'+'\n'.join(song for song in self.queue)+'```')
             else:
                 await ctx.send('The queue is empty')\
                     

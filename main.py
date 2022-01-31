@@ -1,4 +1,5 @@
 from discord.ext import commands
+from hanuman.cogs.imageManipulation import ImageManipulation
 from hanuman.funcs.auth import token
 from hanuman.cogs.music import MusicPlayer 
 from hanuman.cogs.welcoming import Greetings
@@ -14,5 +15,6 @@ async def penis(ctx):
     await ctx.reply('hello')
 
 bot.add_cog(MusicPlayer(bot))
+bot.add_cog(ImageManipulation(bot))
 # bot.add_cog(Greetings(bot))
 bot.run(token)
