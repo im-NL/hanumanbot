@@ -17,7 +17,7 @@ async def on_ready():
 async def penis(ctx):
     await ctx.reply('hello')
 
-# bot.add_cog(MusicPlayer(bot))
+bot.add_cog(MusicPlayer(bot))
 bot.add_cog(ImageManipulation(bot))
 # bot.add_cog(Greetings(bot))
 bot.run(token)

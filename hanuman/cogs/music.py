@@ -3,16 +3,33 @@ from discord.ext import commands
 import discord
 import youtube_dl 
 from ..funcs.spotifyfuncs import * 
-from ..funcs.ytscrape import get_song_link
-import asyncio
+from ..funcs.ytscrape import get_song_link, get_song_details
+import asyncio 
 
 class MusicPlayer(commands.Cog):
     def __init__(self, bot) -> None:
         super().__init__()
         self.bot = bot 
         self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5','options': '-vn'}
+        self.YDL_OPTIONS = {'format': 'bestaudio'}
         self.queue = []
         self.current_track = 0
+
+    async def play_song(self, ctx):
+        voice = ctx.guild.voice_client
+        self.current_track += 1
+        url = self.queue[self.current_track]
+
+        with youtube_dl.YoutubeDL(self.YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(url, download=False)
+            url2 = info['formats'][0]['url']
+            source = await discord.FFmpegOpusAudio.from_probe(url2, **self.FFMPEG_OPTIONS, executable='ffmpeg.exe')
+            voice.play(source, after=lambda e: self.segue(ctx))
+
+    def segue(self, ctx):
+        self.bot.loop.create_task(self.play_song(ctx))
+        # loop = asyncio.get_event_loop()
+        # loop.run_until_complete(self.play_song(ctx))
 
     @commands.command(pass_context = True)
     async def join(self, ctx):
@@ -60,10 +77,7 @@ class MusicPlayer(commands.Cog):
                     url2 = info['formats'][0]['url']
                     source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS, executable='ffmpeg.exe')
                     self.queue.append(url)
-                    if len(self.queue) < 2:
-                        voice.play(source)        
-                    else:
-                        voice.play(source, after=self.skip(ctx=ctx))
+                    voice.play(source, after=lambda e: self.segue(ctx))
         else:
             self.queue.append(url)
             await ctx.send('Added song to queue!')
@@ -87,9 +101,9 @@ class MusicPlayer(commands.Cog):
                 await ctx.send('song queued!')
         else:
             if len(self.queue)!=0:
-                await ctx.send('```'+'\n'.join(song for song in self.queue)+'```')
+                await ctx.send('```'+'\n'.join(get_song_details(song)[0] for song in self.queue)+'```')
             else:
-                await ctx.send('The queue is empty')\
+                await ctx.send('The queue is empty')
                     
     @commands.command()
     async def pause(self, ctx):
@@ -107,16 +121,8 @@ class MusicPlayer(commands.Cog):
     async def skip(self, ctx):
         voice = ctx.guild.voice_client
         voice.stop()
-        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'}
-        YDL_OPTIONS = {'format': 'bestaudio'}
-        self.current_track += 1
-        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(self.queue[self.current_track], download=False)
-            url2 = info['formats'][0]['url']
-            source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS, executable='ffmpeg.exe')
-        print('skip play')
-        voice.play(source)
+        self.segue(ctx)
 
     @commands.command()
     async def np(self, ctx):
-        await ctx.send(f"{self.queue[self.current_track]} is playing")
+        await ctx.send(f"{self.queue[self.current_track]} is playing, {self.current_track} is the index in queue")
