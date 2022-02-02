@@ -18,13 +18,15 @@ class MusicPlayer(commands.Cog):
     async def play_song(self, ctx):
         voice = ctx.guild.voice_client
         self.current_track += 1
-        url = self.queue[self.current_track]
-
-        with youtube_dl.YoutubeDL(self.YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
-            url2 = info['formats'][0]['url']
-            source = await discord.FFmpegOpusAudio.from_probe(url2, **self.FFMPEG_OPTIONS, executable='ffmpeg.exe')
-            voice.play(source, after=lambda e: self.segue(ctx))
+        try:
+            url = self.queue[self.current_track]
+            with youtube_dl.YoutubeDL(self.YDL_OPTIONS) as ydl:
+                info = ydl.extract_info(url, download=False)
+                url2 = info['formats'][0]['url']
+                source = await discord.FFmpegOpusAudio.from_probe(url2, **self.FFMPEG_OPTIONS, executable='ffmpeg.exe')
+                voice.play(source, after=lambda e: self.segue(ctx))
+        except IndexError:
+            await ctx.send("Queue over!")
 
     def segue(self, ctx):
         self.bot.loop.create_task(self.play_song(ctx))
@@ -56,6 +58,7 @@ class MusicPlayer(commands.Cog):
             pass
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'}
         YDL_OPTIONS = {'format': 'bestaudio'}
+        # YDL_OPTIONS = {'format': 'beataudio/best', 'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192'}]}
         if len(args)==1 and 'https://www.youtube.com' in args[0]:
             url = args[0]
         elif len(args)==1 and 'https://open.spotify.com/track' in args[0]:
@@ -114,15 +117,17 @@ class MusicPlayer(commands.Cog):
     @commands.command()
     async def pause(self, ctx):
         voice = ctx.guild.voice_client
-        voice.resume()
+        voice.pause()
         await ctx.send('paused current track')
 
     @commands.command()
     async def skip(self, ctx):
         voice = ctx.guild.voice_client
         voice.stop()
-        self.segue(ctx)
 
     @commands.command()
     async def np(self, ctx):
-        await ctx.send(f"{self.queue[self.current_track]} is playing, {self.current_track} is the index in queue")
+        try:
+            await ctx.send(f"{self.queue[self.current_track]} is playing, {self.current_track} is the index in queue")
+        except IndexError:
+            await ctx.send(f"{self.current_track}")
