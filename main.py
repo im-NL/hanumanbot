@@ -1,8 +1,8 @@
 from discord.ext import commands
 from hanuman.cogs.imageManipulation import ImageManipulation
 from hanuman.funcs.auth import token
-from hanuman.cogs.music import MusicPlayer 
-from hanuman.cogs.welcoming import Greetings
+from hanuman.cogs.music import MusicPlayer
+from hanuman.cogs.tts import TTS
 import discord 
 import asyncio 
 
@@ -37,5 +37,5 @@ async def echo(ctx, *args):
 
 bot.add_cog(MusicPlayer(bot))
 bot.add_cog(ImageManipulation(bot))
-# bot.add_cog(Greetings(bot))
+bot.add_cog(TTS(bot))
 bot.run(token)
