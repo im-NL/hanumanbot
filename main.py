@@ -10,7 +10,7 @@ bot = commands.Bot(command_prefix='$')
 
 @bot.event
 async def on_ready():
-    game = discord.Game("ram bhajan simulator")
+    game = discord.Game("music vc time cereal killers fr")
     print('We have logged in as {0.user}'.format(bot))
     await bot.change_presence(activity=game, status=discord.Status.idle)
 
@@ -34,6 +34,17 @@ async def on_ready():
 async def echo(ctx, *args):
     msg = ' '.join(arg for arg in args)
     await ctx.send(msg)
+
+@bot.command()
+async def setstatus(ctx, *args):
+    text = ' '.join(arg for arg in args)
+    game = discord.Game(text)
+    await bot.change_presence(activity=game, status=discord.Status.idle)
+    await ctx.send("Changed status to {}".format('**'+text+'**'))
+
+@bot.command()
+async def purge(ctx, limit:int):
+    await ctx.channel.purge(limit=limit)
 
 bot.add_cog(MusicPlayer(bot))
 bot.add_cog(ImageManipulation(bot))
