@@ -10,7 +10,7 @@ bot = commands.Bot(command_prefix='$')
 
 @bot.event
 async def on_ready():
-    game = discord.Game("music vc time cereal killers fr")
+    game = discord.Game("chandaal")
     print('We have logged in as {0.user}'.format(bot))
     await bot.change_presence(activity=game, status=discord.Status.idle)
 
