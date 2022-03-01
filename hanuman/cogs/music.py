@@ -136,7 +136,7 @@ class MusicPlayer(commands.Cog):
                         sent.edit(content= "".join(line for line in msg[msg.index(curr_q[:-1])-20:msg.index(curr_q[:-1])]))
 
                 else:
-                    ctx.send(msg)
+                    await ctx.send(msg)
             else:
                 await ctx.send('The queue is empty')
                     
