@@ -44,10 +44,14 @@ class MusicPlayer(commands.Cog):
         # loop.run_until_complete(self.play_song(ctx))
 
     @commands.command(pass_context = True)
-    async def join(self, ctx):
-        channel = ctx.message.author.voice.channel
-        await channel.connect()
-        await ctx.send('I joined the voice channel **{}**'.format(channel.name))
+    async def join(self, ctx, *channelname):
+        if channelname:
+            channel = discord.utils.get(ctx.guild.channels, name=" ".join(word for word in channelname))
+            await channel.connect()
+        else:
+            channel = ctx.message.author.voice.channel
+            await channel.connect()
+            await ctx.send('I joined the voice channel **{}**'.format(channel.name))
 
     @commands.command(aliases=['dc', 'disconnect'])
     async def leave(self, ctx):
