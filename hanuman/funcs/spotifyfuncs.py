@@ -20,9 +20,11 @@ def get_playlist_tracks(url):
     results = spotify.playlist_tracks(url)
     result = []
     links = []
+    names = []
     for i in range(len(results['items'])):
         result.append(results['items'][i]['track']['name'] + ' ' + results['items'][i]['track']['artists'][0]['name'])
-
+        names.append(results['items'][i]['track']['name'])
+        
     for song in result:
         song = song.encode('utf-8')
         print(song)
@@ -30,7 +32,7 @@ def get_playlist_tracks(url):
         all_links = re.findall(r"watch\?v=(\S{11})", html.read().decode())
         url = (f'https://www.youtube.com/watch?v={all_links[0]}')
         links.append(url)
-    return links
+    return {"links": links, "names": names}
 
 def get_spotify_track(url):
     song = spotify.track(url)

@@ -110,10 +110,10 @@ class MusicPlayer(commands.Cog):
                 self.queue.append(url)
                 self.display_queue.append(get_song_details(url)[0])
             elif len(args)==1 and 'https://open.spotify.com/playlist' in args[0]:
-                links = get_playlist_tracks(args[0])
-                for link in links:
+                details = get_playlist_tracks(args[0])
+                for link, name in zip(details["links"], details["names"]):
                     self.queue.append(link)
-                    self.display_queue.append(get_song_details(link)[0])
+                    self.display_queue.append(name)
             else:
                 link = get_song_link(''.join(arg for arg in args))
                 self.queue.append(link)
@@ -121,20 +121,35 @@ class MusicPlayer(commands.Cog):
                 await ctx.send('song queued!')
         else:
             if len(self.queue)!=0:
-                msg = '```'+'\n'.join(f"{num}. {song}" for song, num in zip(self.display_queue, range(1,len(self.display_queue)+1)))+'```'
+                msg = '```'+'\n'.join(f"{num}. {song[2:-1]}" for song, num in zip(self.display_queue, range(1,len(self.display_queue)+1)))+'```'
                 if len(msg.split('\n'))>20:
                     curr_q = msg.split('\n')[:20]
-                    sent = await ctx.send('\n'.join(line for line in curr_q))
-                    forw = self.bot.get_emoji(947210751519629332)
-                    back = self.bot.get_emoji(947210956021325894)
+                    sent = await ctx.send('\n'.join(line for line in curr_q)+'```')
+                    back = "⬅️"
+                    forw = "➡️"
                     await sent.add_reaction(back)
                     await sent.add_reaction(forw)
-                    reaction = await self.bot.wait_for('reaction_add', timeout=60.0, check=lambda x: x==None)
-                    if reaction.emoji == forw:
-                        sent.edit(content= "".join(line for line in msg[msg.index(curr_q[:-1]):msg.index(curr_q[:-1])+20]))
-                    if reaction.emoji == back:
-                        sent.edit(content= "".join(line for line in msg[msg.index(curr_q[:-1])-20:msg.index(curr_q[:-1])]))
+                    looper = 20
+                    msg = msg[3:-3]
+                    while True:
+                        try:
+                            reaction, y = await self.bot.wait_for('reaction_add', timeout=20.0)
+                            if "➡️" in str(reaction):
+                                edited = '```' + "\n".join(line for line in msg.split('\n')[looper:looper+20]) + '```'
+                                await sent.edit(content=edited)
+                                if looper+20<len(msg.split('\n')):
+                                    looper += 20
+                                else:
+                                    looper=0
+                            else:
+                                if looper-20>=0:
+                                    edited = '```' + "\n".join(line for line in msg.split('\n')[looper-20:looper]) + '```'
+                                    await sent.edit(content=edited)
+                                    looper -=20
 
+                        except Exception as e:
+                            print(e)
+                            break
                 else:
                     await ctx.send(msg)
             else:
@@ -154,7 +169,7 @@ class MusicPlayer(commands.Cog):
     @commands.command()
     async def np(self, ctx):
         try:
-            await ctx.send(f"{self.queue[self.current_track-1]} is playing, {self.current_track} is the index in queue")
+            await ctx.send(f"{self.queue[self.current_track]} is playing, {self.current_track+1} is the index in queue")
         except IndexError:
             await ctx.send(f"{self.current_track}")
 
