@@ -33,6 +33,7 @@ async def on_ready():
 @bot.command()
 async def echo(ctx, *args):
     msg = ' '.join(arg for arg in args)
+    await ctx.channel.purge(limit=1)
     await ctx.send(msg)
 
 @bot.command()
