@@ -1,12 +1,7 @@
 from discord.ext import commands
 import discord
-import json 
-import datetime
 import asyncio
 from funcs.auth import token
-from cogs.imageManipulation import imageManipulation
-from cogs.music import music
-from cogs.tts import tts
 
 intents = discord.Intents.default()
 intents.members = True
