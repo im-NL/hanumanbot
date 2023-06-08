@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
 from gtts import gTTS
-from io import BytesIO
-from funcs.FFmpegPCMAudioGTTS import FFmpegPCMAudioGTTS
 
 class tts(commands.Cog):
 

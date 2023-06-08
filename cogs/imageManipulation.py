@@ -1,9 +1,6 @@
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 import discord
-import textwrap
-
-from matplotlib.pyplot import fill
 
 class imageManipulation(commands.Cog):
     def __init__(self, bot):
