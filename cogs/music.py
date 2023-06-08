@@ -1,11 +1,11 @@
 from discord.ext import commands
 import discord
 import youtube_dl 
-from ..funcs.spotifyfuncs import * 
-from ..funcs.ytscrape import get_song_link, get_song_details
+from funcs.spotifyfuncs import * 
+from funcs.ytscrape import get_song_link, get_song_details
 import threading
 
-class MusicPlayer(commands.Cog):
+class music(commands.Cog):
     def __init__(self, bot) -> None:
         super().__init__()
         self.bot = bot 
@@ -40,8 +40,6 @@ class MusicPlayer(commands.Cog):
 
     def segue(self, ctx):
         self.bot.loop.create_task(self.play_song(ctx))
-        # loop = asyncio.get_event_loop()
-        # loop.run_until_complete(self.play_song(ctx))
 
     @commands.command(pass_context = True)
     async def join(self, ctx, *channelname):
@@ -187,3 +185,7 @@ class MusicPlayer(commands.Cog):
                 self.segue(ctx)
         except:
             await ctx.send("abbey chutiye number daal jump likhne ke baad", delete_after=2.5)
+
+
+async def setup(bot):
+    await bot.add_cog(music(bot))

@@ -5,7 +5,7 @@ import textwrap
 
 from matplotlib.pyplot import fill
 
-class ImageManipulation(commands.Cog):
+class imageManipulation(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
@@ -33,3 +33,7 @@ class ImageManipulation(commands.Cog):
             meme.text((width//2, height-height//10), text=bottom_text, fill=(255, 255, 255), font=ImageFont.truetype("Impact.ttf", 80), anchor="mm")
         img.save("temp.png")
         await ctx.send(file=discord.File(r"temp.png"))
+
+
+async def setup(bot):
+    await bot.add_cog(imageManipulation(bot))

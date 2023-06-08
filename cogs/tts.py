@@ -2,9 +2,9 @@ import discord
 from discord.ext import commands
 from gtts import gTTS
 from io import BytesIO
-from ..funcs.FFmpegPCMAudioGTTS import FFmpegPCMAudioGTTS
+from funcs.FFmpegPCMAudioGTTS import FFmpegPCMAudioGTTS
 
-class TTS(commands.Cog):
+class tts(commands.Cog):
 
     def __init__(self, bot) -> None:
         super().__init__()
@@ -30,3 +30,7 @@ class TTS(commands.Cog):
             voice.stop()
         else:
             await ctx.send('no audio is playing!')
+
+
+async def setup(bot):
+    await bot.add_cog(tts(bot))

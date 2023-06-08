@@ -1,34 +1,48 @@
 from discord.ext import commands
-from hanuman.cogs.imageManipulation import ImageManipulation
-from hanuman.funcs.auth import token
-from hanuman.cogs.music import MusicPlayer
-from hanuman.cogs.tts import TTS
-import discord 
-import asyncio 
+import discord
+import json 
+import datetime
+import asyncio
+import os 
+from funcs.auth import token
+from cogs.imageManipulation import imageManipulation
+from cogs.music import music
+from cogs.tts import tts
 
-bot = commands.Bot(command_prefix='$')
+intents = discord.Intents.default()
+intents.members = True
+intents.message_content = True
+intents.voice_states = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
 
 @bot.event
 async def on_ready():
-    game = discord.Game("chandaal")
+    game = discord.Game("RANDEEB")
     print('We have logged in as {0.user}'.format(bot))
     await bot.change_presence(activity=game, status=discord.Status.idle)
+    #------
+    # segue()
 
-# @bot.event
-# async def on_member_join(member):
-#     def check(msg):
-#         try:
-#             int(msg)
-#             return True
-#         except:
-#             return False
-
-#     channel = discord.utils.get(member.guild.channels, name="laat")
-#     await channel.send("How long till we kick the new member?")
-#     timer = await bot.wait_for("message", check=check)
-#     timer = timer*60*60
-#     asyncio.sleep(int(timer))
-#     await member.guild.kick(member)
+@bot.event
+async def on_member_join(member):
+    channel = await discord.utils.get(member.guild.channels, name="laat")
+    await channel.send("How long till we kick the new member? [tell in hours] \
+        type 'grant' to give permission to stay")
+    timer = await bot.wait_for("message")
+    try:
+        if float(timer):
+            with open('kickers.json', 'r+') as file:
+                content = file.read()
+                content = json.loads(content)
+                data = {
+                    "jointime": datetime.datetime.now(),
+                    "timeallowed": timer*60*60
+                }
+                content[member.guild][member.id] = data
+    except:
+        if timer != 'grant':
+            member.guild.kick(member)
 
 @bot.command()
 async def echo(ctx, *args):
@@ -47,7 +61,16 @@ async def setstatus(ctx, *args):
 async def purge(ctx, limit:int):
     await ctx.channel.purge(limit=limit)
 
-bot.add_cog(MusicPlayer(bot))
-bot.add_cog(ImageManipulation(bot))
-bot.add_cog(TTS(bot))
-bot.run(token)
+# async def setup():
+#     await bot.load_extension(music(bot))
+#     await bot.load_extension(imageManipulation(bot))
+#     await bot.load_extension(tts(bot))   
+
+async def main():
+    async with bot:
+        await bot.load_extension('cogs.music')
+        await bot.load_extension('cogs.imageManipulation')
+        await bot.load_extension('cogs.tts')
+        await bot.start(token)
+
+asyncio.run(main())
