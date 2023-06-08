@@ -21,26 +21,6 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
     await bot.change_presence(activity=game, status=discord.Status.idle)
 
-@bot.event
-async def on_member_join(member):
-    channel = await discord.utils.get(member.guild.channels, name="laat")
-    await channel.send("How long till we kick the new member? [tell in hours] \
-        type 'grant' to give permission to stay")
-    timer = await bot.wait_for("message")
-    try:
-        if float(timer):
-            with open('kickers.json', 'r+') as file:
-                content = file.read()
-                content = json.loads(content)
-                data = {
-                    "jointime": datetime.datetime.now(),
-                    "timeallowed": timer*60*60
-                }
-                content[member.guild][member.id] = data
-    except:
-        if timer != 'grant':
-            member.guild.kick(member)
-
 @bot.command()
 async def echo(ctx, *args):
     msg = ' '.join(arg for arg in args)
