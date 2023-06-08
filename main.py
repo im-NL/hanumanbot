@@ -3,7 +3,6 @@ import discord
 import json 
 import datetime
 import asyncio
-import os 
 from funcs.auth import token
 from cogs.imageManipulation import imageManipulation
 from cogs.music import music
@@ -21,8 +20,6 @@ async def on_ready():
     game = discord.Game("RANDEEB")
     print('We have logged in as {0.user}'.format(bot))
     await bot.change_presence(activity=game, status=discord.Status.idle)
-    #------
-    # segue()
 
 @bot.event
 async def on_member_join(member):
@@ -60,11 +57,6 @@ async def setstatus(ctx, *args):
 @bot.command()
 async def purge(ctx, limit:int):
     await ctx.channel.purge(limit=limit)
-
-# async def setup():
-#     await bot.load_extension(music(bot))
-#     await bot.load_extension(imageManipulation(bot))
-#     await bot.load_extension(tts(bot))   
 
 async def main():
     async with bot:

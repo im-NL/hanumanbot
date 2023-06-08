@@ -71,7 +71,6 @@ class music(commands.Cog):
 
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'}
         YDL_OPTIONS = {'format': 'bestaudio'}
-        # YDL_OPTIONS = {'format': 'beataudio/best', 'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192'}]}
         if len(args)==1 and 'https://www.youtube.com' in args[0]:
             url = args[0]
         elif len(args)==1 and 'https://open.spotify.com/track' in args[0]:
