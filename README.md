@@ -4,13 +4,13 @@
 <br>
 
 # FEATURES
-> Music Playing- YouTube prevented bots from playing music in discord voice channels so there aren't any big bots doing it anymore, that's why I made this write $play \<song name> and the bot will join the VC you're in and play the song. Supports SPOTIFY PLAYLISTS, youtube links, and regular song names as well (there are obviously also other commands like pause, queue, skip etc. it has everything you'd need)
+- Music Playing- YouTube prevented bots from playing music in discord voice channels so there aren't any big bots doing it anymore, that's why I made this write $play \<song name> and the bot will join the VC you're in and play the song. Supports SPOTIFY PLAYLISTS, youtube links, and regular song names as well (there are obviously also other commands like pause, queue, skip etc. it has everything you'd need)
 
->TTS- $tts \<stuff you wanna say> will convert text to speech and say it in the VC. Clutch for when you don't want people around you hearing what you're saying.
+- TTS- $tts \<stuff you wanna say> will convert text to speech and say it in the VC. Clutch for when you don't want people around you hearing what you're saying.
 
->Memes- $meme top-text | bottom-text [with an image attatched] will send an image back with the text written on it.
+- Memes- $meme top-text | bottom-text [with an image attatched] will send an image back with the text written on it.
 
->Misc- Some other useful commands like echo, setstatus (set's the bot's status) and purge
+- Misc- Some other useful commands like echo, setstatus (set's the bot's status) and purge
 
 <br>
 
