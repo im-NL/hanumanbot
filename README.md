@@ -2,7 +2,8 @@
 
 ##### For when they ban or shut down all the other bots and you just want something to work
 <br>
-
+# NOTE
+I'm archiving this repository because the bot has become redundant after the second discord API rewrite and YTDL is screwed up as well.
 # FEATURES
 - Music Playing- YouTube prevented bots from playing music in discord voice channels so there aren't any big bots doing it anymore, that's why I made this write $play \<song name> and the bot will join the VC you're in and play the song. Supports SPOTIFY PLAYLISTS, youtube links, and regular song names as well (there are obviously also other commands like pause, queue, skip etc. it has everything you'd need)
 
